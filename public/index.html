@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride Sharing Matching DBMS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Ride Sharing Matching DBMS</h1>
+            <p>High Read + Frequent Updates | Peak-Hour Concurrency Focus</p>
+            <div class="live-indicator">
+                <span class="pulse"></span>
+                <span id="connection-status">Connected</span>
+            </div>
+        </header>
+
+        <!-- Stats Dashboard -->
+        <section class="stats-grid" id="stats-section">
+            <div class="stat-card">
+                <h3>Pending Requests</h3>
+                <p class="stat-value" id="stat-pending">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Matched Rides</h3>
+                <p class="stat-value" id="stat-matched">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Trips</h3>
+                <p class="stat-value" id="stat-active">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Available Drivers</h3>
+                <p class="stat-value" id="stat-drivers">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Completed Today</h3>
+                <p class="stat-value" id="stat-completed">0</p>
+            </div>
+        </section>
+
+        <!-- Main Tabs -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="rides">Ride Requests</button>
+            <button class="tab-btn" data-tab="drivers">Drivers</button>
+            <button class="tab-btn" data-tab="match">Match Console</button>
+            <button class="tab-btn" data-tab="register">Register</button>
+        </nav>
+
+        <!-- Tab: Ride Requests -->
+        <section class="tab-content active" id="tab-rides">
+            <div class="section-header">
+                <h2>Active & Pending Rides</h2>
+                <button class="btn btn-primary" id="btn-request-ride">+ Request New Ride</button>
+                <button class="btn btn-secondary" id="btn-refresh-rides">Refresh</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Rider</th>
+                            <th>Pickup</th>
+                            <th>Dropoff</th>
+                            <th>Fare</th>
+                            <th>Status</th>
+                            <th>Driver</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rides-tbody">
+                        <tr><td colspan="9" class="loading">Loading rides...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tab: Drivers -->
+        <section class="tab-content" id="tab-drivers">
+            <div class="section-header">
+                <h2>All Drivers</h2>
+                <button class="btn btn-secondary" id="btn-refresh-drivers">Refresh</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Vehicle</th>
+                            <th>Plate</th>
+                            <th>Status</th>
+                            <th>Rating</th>
+                            <th>Trips</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drivers-tbody">
+                        <tr><td colspan="9" class="loading">Loading drivers...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tab: Match Console -->
+        <section class="tab-content" id="tab-match">
+            <div class="match-grid">
+                <div class="match-column">
+                    <h2>Pending Requests</h2>
+                    <div class="card-list" id="pending-requests">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+                <div class="match-column">
+                    <h2>Available Drivers</h2>
+                    <div class="card-list" id="available-drivers">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="match-actions">
+                <div class="match-selection">
+                    <label>Selected Request:</label>
+                    <span id="sel-request">None</span>
+                </div>
+                <div class="match-selection">
+                    <label>Selected Driver:</label>
+                    <span id="sel-driver">None</span>
+                </div>
+                <button class="btn btn-primary btn-large" id="btn-match" disabled>Match Ride</button>
+            </div>
+        </section>
+
+        <!-- Tab: Register -->
+        <section class="tab-content" id="tab-register">
+            <div class="form-grid">
+                <div class="form-card">
+                    <h2>Register New Driver</h2>
+                    <form id="form-driver">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Model</label>
+                            <input type="text" name="vehicle_model" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Plate</label>
+                            <input type="text" name="vehicle_plate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register Driver</button>
+                    </form>
+                </div>
+                <div class="form-card">
+                    <h2>Update Driver Location</h2>
+                    <form id="form-location">
+                        <div class="form-group">
+                            <label>Driver ID</label>
+                            <input type="number" name="driver_id" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" step="any" name="latitude" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" step="any" name="longitude" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Location</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal: Request Ride -->
+    <div class="modal" id="modal-request">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Request a Ride</h2>
+            <form id="form-request">
+                <div class="form-group">
+                    <label>User ID</label>
+                    <input type="number" name="user_id" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Pickup Latitude</label>
+                    <input type="number" step="any" name="pickup_lat" value="40.7128" required>
+                </div>
+                <div class="form-group">
+                    <label>Pickup Longitude</label>
+                    <input type="number" step="any" name="pickup_lng" value="-74.0060" required>
+                </div>
+                <div class="form-group">
+                    <label>Dropoff Latitude</label>
+                    <input type="number" step="any" name="dropoff_lat" value="40.7580" required>
+                </div>
+                <div class="form-group">
+                    <label>Dropoff Longitude</label>
+                    <input type="number" step="any" name="dropoff_lng" value="-73.9855" required>
+                </div>
+                <div class="form-group">
+                    <label>Pickup Address</label>
+                    <input type="text" name="pickup_address" value="Downtown Manhattan">
+                </div>
+                <div class="form-group">
+                    <label>Dropoff Address</label>
+                    <input type="text" name="dropoff_address" value="Times Square">
+                </div>
+                <div class="form-group">
+                    <label>Fare Estimate ($)</label>
+                    <input type="number" step="0.01" name="fare_estimate" value="15.50">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
